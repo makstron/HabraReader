@@ -8,6 +8,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.klim.habrareader.app.managers.windows_manager.views.WindowsContainer
+            android:id="@+id/wcWindowsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        </com.klim.habrareader.app.managers.windows_manager.views.WindowsContainer>
+
         <View
             android:id="@+id/statusBarFon"
             android:layout_width="match_parent"
