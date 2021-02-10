@@ -8,11 +8,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="colorPrimary">#FFFFFFFF</color>
-    <color name="colorPrimaryVariant">#FFFFFFFF</color>
-    <color name="colorOnPrimary">#FFFFFFFF</color>
+    <color name="colorPrimary">#FF000000</color>
+    <color name="colorPrimaryVariant">#FF000000</color>
+    <color name="colorOnPrimary">#FF000000</color>
 
-    <color name="bg">#FFFFFFFF</color>
+    <color name="bg">#121212</color>
 
 
 </resources>
