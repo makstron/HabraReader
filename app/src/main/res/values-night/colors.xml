@@ -12,7 +12,19 @@
     <color name="colorPrimaryVariant">#FF000000</color>
     <color name="colorOnPrimary">#FF000000</color>
 
+    <color name="status_bar_bg">#F50C0C0C</color>
+    <color name="toolbar_bg">#F52E2E2E</color>
     <color name="bg">#121212</color>
+    <color name="post_thumb_bg">#3C3C3C</color>
+    <color name="post_thumb_image_placeholder">#5E5E5E</color>
+
+    <color name="post_thumb_text">#D3D3D3</color>
+
+    <color name="primary_blue">#91B5C3</color>
+
+    <color name="votes_green">#6c9007</color>
+    <color name="votes_neutral">#548eaa</color>
+    <color name="votes_red">#d53c30</color>
 
 
 </resources>

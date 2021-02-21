@@ -20,6 +20,7 @@ class PostDetailsFragment : BaseFragment(), LifecycleOwner {
 
     @SuppressLint("ValidFragment")
     companion object {
+        const val POST_ID = "post_id"
 
         fun newInstance(args: Bundle?): PostDetailsFragment {
             val myFragment = PostDetailsFragment()

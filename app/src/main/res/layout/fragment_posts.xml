@@ -3,20 +3,89 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="isLoading"
+            type="androidx.databinding.ObservableField&lt;Boolean&gt;" />
+
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/bg"
         tools:context=".app.main.postsList.MainFragment">
 
-        <TextView
-            android:id="@+id/tvLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Fragment Posts"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/srlRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lloToolbar">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvDataList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:visibility="visible"
+                tools:alpha="0.5"
+                tools:listitem="@layout/item_thumb_post" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <LinearLayout
+            android:id="@+id/lloToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@color/toolbar_bg"
+            android:gravity="center_vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginLeft="8dp"
+                android:adjustViewBounds="true"
+                app:srcCompat="@drawable/ic_icon_lump" />
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginRight="4dp"
+                android:layout_weight="1"
+                android:text="habr"
+                android:textColor="@color/primary_blue"
+                android:textSize="36sp" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/sListType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="4dp" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/sListThreshold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/sListPeriod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

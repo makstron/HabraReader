@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">HabraReader</string>
+
+    <string name="post_time_today">сегодня</string>
+    <string name="post_time_yesterday">вчера</string>
+    <string name="post_time_at">в</string>
+
+    <string name="post_list_type_all">Все</string>
+    <string name="post_list_type_best">Лучшие</string>
+
+    <string name="post_period_type_day">Сутки</string>
+    <string name="post_period_type_week">Неделя</string>
+    <string name="post_period_type_month">Месяц</string>
+    <string name="post_period_type_year">Год</string>
+
 </resources>
