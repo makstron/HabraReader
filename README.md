@@ -7,4 +7,4 @@ This background ![](https://via.placeholder.com/15/B7A6CA/000000?text=+) means u
 
 
 Some preview
-![](https://github.com/saulmm/HabraReader/blob/master/info/preview.gif?raw=true)
+![](https://github.com/makstron/HabraReader/blob/master/info/preview.gif?raw=true)
