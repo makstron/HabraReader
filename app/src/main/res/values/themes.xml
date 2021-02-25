@@ -23,4 +23,8 @@
         <item name="android:windowBackground">@drawable/bg_before_start</item>
     </style>
 
+    <style name="Theme.HabraReader.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.HabraReader.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 </resources>

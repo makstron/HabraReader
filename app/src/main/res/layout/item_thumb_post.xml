@@ -25,7 +25,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_terrain" />
+                app:srcCompat="@drawable/ic_terrain_wide" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivAuthorLogo"
@@ -93,101 +93,71 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvAuthor"
                 tools:text="Всем привет! Это третья, завершающая, часть нашего рассказа о том, как «Ростелеком ИТ» внедряет CI/CD &amp; DevOps в энтерпрайзовый ИТ-ландшафт и тяжелые монолитные Legacy-системы. Первую часть про внедрение CI/CD в десятки проектных команд очень большой компании можно прочитать на Хабре по ссылке " />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivVotes"
-                android:layout_width="10dp"
-                android:layout_height="14dp"
-                android:layout_marginEnd="4dp"
-                android:scaleType="centerInside"
-                app:layout_constraintBottom_toBottomOf="@+id/tvAuthor"
-                app:layout_constraintEnd_toStartOf="@+id/tvVotesCount"
-                app:layout_constraintTop_toTopOf="@+id/tvAuthor"
-                app:srcCompat="@drawable/ic_vote"
-                app:tint="@color/primary_blue" />
-
-            <TextView
-                android:id="@+id/tvVotesCount"
+            <com.klim.habrareader.app.views.RatingView
+                android:id="@+id/rvVotes"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:textColor="@color/primary_blue"
-                android:textSize="14sp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="6dp"
+                app:colorNegative="@color/votes_red"
+                app:colorNeutral="@color/votes_neutral"
+                app:colorPositive="@color/votes_green"
+                app:icon="@drawable/ic_vote"
+                app:iconColor="@color/primary_blue"
+                app:iconHeight="17dp"
+                app:iconWidth="17dp"
                 app:layout_constraintBottom_toBottomOf="@+id/tvAuthor"
-                app:layout_constraintEnd_toStartOf="@+id/ivBookmarks"
+                app:layout_constraintEnd_toStartOf="@+id/rvBookmarks"
                 app:layout_constraintTop_toTopOf="@+id/tvAuthor"
-                tools:text="0" />
+                app:textSize="14sp"
+                app:useColors="true"
+                app:usePrefix="true"
+                app:valueColor="@color/primary_blue" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivBookmarks"
-                android:layout_width="10dp"
-                android:layout_height="14dp"
-                android:layout_marginEnd="4dp"
-                android:scaleType="centerInside"
-                app:layout_constraintBottom_toBottomOf="@+id/tvAuthor"
-                app:layout_constraintEnd_toStartOf="@+id/tvBookmarksCount"
-                app:layout_constraintTop_toTopOf="@+id/tvAuthor"
-                app:srcCompat="@drawable/ic_bookmark"
-                app:tint="@color/primary_blue" />
-
-            <TextView
-                android:id="@+id/tvBookmarksCount"
+            <com.klim.habrareader.app.views.RatingView
+                android:id="@+id/rvBookmarks"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:textColor="@color/primary_blue"
-                android:textSize="14sp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="6dp"
+                app:icon="@drawable/ic_bookmark"
+                app:iconColor="@color/primary_blue"
+                app:iconHeight="16dp"
+                app:iconWidth="16dp"
                 app:layout_constraintBottom_toBottomOf="@+id/tvAuthor"
-                app:layout_constraintEnd_toStartOf="@+id/ivViews"
+                app:layout_constraintEnd_toStartOf="@+id/rvViews"
                 app:layout_constraintTop_toTopOf="@+id/tvAuthor"
-                tools:text="0" />
+                app:textSize="14sp"
+                app:valueColor="@color/primary_blue" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivViews"
-                android:layout_width="18dp"
-                android:layout_height="14dp"
-                android:layout_marginEnd="4dp"
-                android:scaleType="centerInside"
-                app:layout_constraintBottom_toBottomOf="@+id/tvAuthor"
-                app:layout_constraintEnd_toStartOf="@+id/tvViewCount"
-                app:layout_constraintTop_toTopOf="@+id/tvAuthor"
-                app:srcCompat="@drawable/ic_view"
-                app:tint="@color/primary_blue" />
-
-            <TextView
-                android:id="@+id/tvViewCount"
+            <com.klim.habrareader.app.views.RatingView
+                android:id="@+id/rvViews"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:textColor="@color/primary_blue"
-                android:textSize="14sp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="6dp"
+                app:icon="@drawable/ic_view"
+                app:iconColor="@color/primary_blue"
+                app:iconHeight="18dp"
+                app:iconWidth="18dp"
                 app:layout_constraintBottom_toBottomOf="@+id/tvAuthor"
-                app:layout_constraintEnd_toStartOf="@+id/ivComments"
+                app:layout_constraintEnd_toStartOf="@+id/rvComments"
                 app:layout_constraintTop_toTopOf="@+id/tvAuthor"
-                tools:text="0" />
+                app:textSize="14sp"
+                app:valueColor="@color/primary_blue" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivComments"
-                android:layout_width="13dp"
-                android:layout_height="14dp"
-                android:layout_marginEnd="4dp"
-                android:scaleType="centerInside"
-                app:layout_constraintBottom_toBottomOf="@+id/tvAuthor"
-                app:layout_constraintEnd_toStartOf="@+id/tvCommentsCount"
-                app:layout_constraintTop_toTopOf="@+id/tvAuthor"
-                app:srcCompat="@drawable/ic_comment"
-                app:tint="@color/primary_blue" />
-
-            <TextView
-                android:id="@+id/tvCommentsCount"
+            <com.klim.habrareader.app.views.RatingView
+                android:id="@+id/rvComments"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:textColor="@color/primary_blue"
-                android:textSize="14sp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="16dp"
+                app:icon="@drawable/ic_comment"
+                app:iconColor="@color/primary_blue"
+                app:iconHeight="15dp"
+                app:iconWidth="15dp"
                 app:layout_constraintBottom_toBottomOf="@+id/tvAuthor"
-                app:layout_constraintEnd_toEndOf="@+id/tvTitle"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tvAuthor"
-                tools:text="0" />
+                app:textSize="14sp"
+                app:valueColor="@color/primary_blue" />
+
 
             <TextView
                 android:id="@+id/tvCreatedTime"

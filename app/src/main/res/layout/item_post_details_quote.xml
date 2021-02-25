@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/tvText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@color/detail_quote_fon"
+        android:padding="8dp"
+        android:textColor="@color/detail_quote_text"
+        android:textSize="15sp"
+        android:visibility="visible"
+        tools:text="Всем привет! Это третья, завершающая, часть нашего рассказа о том, как «Ростелеком ИТ» внедряет CI/CD &amp; DevOps в энтерпрайзовый ИТ-ландшафт и тяжелые монолитные Legacy-системы. Первую часть про внедрение CI/CD в десятки проектных команд очень большой компании можно прочитать на Хабре по ссылке " />
+
+</layout>

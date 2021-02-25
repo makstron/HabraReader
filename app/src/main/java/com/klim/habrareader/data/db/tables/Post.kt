@@ -3,18 +3,24 @@ package com.klim.habrareader.data.db.tables
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import org.jetbrains.annotations.Nullable
 
 @Entity(tableName = "posts")
 class Post(
     @PrimaryKey
+    @ColumnInfo(name = "id")
     var id: Int,
 
+    @ColumnInfo(name = "title")
     var title: String,
 
-    @ColumnInfo(name = "short_description")
-    var shortDescription: String,
+    @Nullable
+    @ColumnInfo(name = "short_description", defaultValue = "NULL")
+    var shortDescription: String?,
 
-    var description: String,
+    @Nullable
+    @ColumnInfo(defaultValue = "NULL")
+    var description: String?,
 
     @ColumnInfo(name = "post_image")
     var postImage: String?,

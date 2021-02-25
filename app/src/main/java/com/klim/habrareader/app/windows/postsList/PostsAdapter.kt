@@ -22,7 +22,7 @@ class PostsAdapter(
     private val placeholder: Drawable
 
     init {
-        placeholder = ResourceUtil.getColoredRes(context, R.drawable.ic_terrain, ContextCompat.getColor(context, R.color.post_thumb_image_placeholder))
+        placeholder = ResourceUtil.getColoredRes(context, R.drawable.ic_terrain_wide, ContextCompat.getColor(context, R.color.post_thumb_image_placeholder))
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -34,16 +34,12 @@ class PostsAdapter(
         holder.binding.apply {
             tvTitle.text = item.title
             tvDescription.text = item.shortDescription
-            tvVotesCount.text = if (item.votesCount == 0) " ${item.votesCount}" else if (item.votesCount > 0) "+${item.votesCount}" else item.votesCount.toString()
-            tvVotesCount.setTextColor(
-                ContextCompat.getColor(
-                    tvVotesCount.context,
-                    if (item.votesCount == 0) R.color.votes_neutral else if (item.votesCount < 0) R.color.votes_red else R.color.votes_green
-                )
-            )
-            tvBookmarksCount.text = item.bookmarksCount
-            tvViewCount.text = item.viewsCount
-            tvCommentsCount.text = item.commentsCount
+
+            rvVotes.setValue(item.votesCount)
+            rvBookmarks.setValue(item.bookmarksCount)
+            rvViews.setValue(item.viewsCount)
+            rvComments.setValue(item.commentsCount)
+
             tvCreatedTime.text = item.createdTime
             tvAuthor.text = item.author
 

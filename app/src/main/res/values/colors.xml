@@ -27,4 +27,18 @@
     <color name="votes_neutral">#548eaa</color>
     <color name="votes_red">#d53c30</color>
 
+    <!-- post details -->
+    <color name="post_title">#548eaa</color>
+    <!-- TITLE -->
+    <color name="detail_title">#548eaa</color>
+    <!-- QUOTE -->
+    <color name="detail_quote_text">#404040</color>
+    <color name="detail_quote_fon">#FF8BC34A</color>
+    <!-- CODE -->
+    <color name="detail_code_text">#404040</color>
+    <color name="detail_code_fon">#77548EAA</color>
+    <!-- DIVIDER -->
+    <color name="detail_code_divider">#404040</color>
+    <!-- // post details -->
+
 </resources>

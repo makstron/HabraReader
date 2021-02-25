@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RatingView">
+        <attr name="icon" format="reference" />
+        <attr name="iconColor" format="reference" />
+        <attr name="iconWidth" format="dimension" />
+        <attr name="iconHeight" format="dimension" />
+
+        <attr name="valueColor" format="reference" />
+        <attr name="textSize" format="dimension" />
+        <attr name="value" format="integer" />
+
+        <attr name="usePrefix" format="boolean" />
+        <attr name="useColors" format="boolean" />
+        <attr name="colorNegative" format="reference" />
+        <attr name="colorNeutral" format="reference" />
+        <attr name="colorPositive" format="reference" />
+
+    </declare-styleable>
+</resources>

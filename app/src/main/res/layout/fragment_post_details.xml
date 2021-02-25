@@ -3,23 +3,231 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg"
-        android:clickable="true"
-        tools:context=".app.main.postsList.MainFragment">
+        android:background="@color/post_thumb_bg">
 
-        <TextView
-            android:id="@+id/tvLabel"
-            android:layout_width="wrap_content"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Fragment Post Detail"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:background="@color/bg"
+            android:stateListAnimator="@animator/appbar_not_elevated"
+            android:theme="@style/Theme.HabraReader.AppBarOverlay"
+            app:layout_behavior=".app.windows.postDetails.FlingBehavior">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/toolbar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="0dp"
+                app:contentScrim="?attr/colorPrimary"
+                app:layout_collapseMode="none"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+                app:toolbarId="@+id/toolbar">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="96dp"
+                    android:visibility="visible"
+                    app:layout_collapseMode="pin"
+                    app:popupTheme="@style/Theme.HabraReader.PopupOverlay" />
+
+                <FrameLayout
+                    android:id="@+id/fl_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/bg"
+                    android:fitsSystemWindows="true" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:context=".app.main.postsList.MainFragment">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/expandedImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:scaleType="centerCrop"
+                        app:layout_collapseMode="parallax"
+                        app:layout_collapseParallaxMultiplier="0.7"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_terrain_wide" />
+
+                    <View
+                        android:id="@+id/view"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:alpha="0.7"
+                        android:background="@color/bg"
+                        app:layout_constraintBottom_toBottomOf="@+id/expandedImage"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/vMarginTop" />
+
+                    <View
+                        android:id="@+id/bottomView"
+                        android:layout_width="match_parent"
+                        android:layout_height="24dp"
+                        android:background="@drawable/post_details_title_bottom_bg"
+                        android:backgroundTint="@color/post_thumb_bg"
+                        android:elevation="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <View
+                        android:id="@+id/vMarginTop"
+                        android:layout_width="408dp"
+                        android:layout_height="4dp"
+                        app:layout_constraintBottom_toTopOf="@+id/tvTitle"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginBottom="74dp"
+                        android:ellipsize="end"
+                        android:maxLines="3"
+                        android:textColor="#AAD5E6"
+                        android:textSize="24sp"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="@+id/bottomView"
+                        tools:text="Using Retrofit 2.x as \nREST client - Tutorial\nv3" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/ivAuthorLogo"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/user_icon_bg"
+                        android:backgroundTint="@color/post_thumb_bg"
+                        app:layout_constraintBottom_toTopOf="@+id/bottomView"
+                        app:layout_constraintStart_toStartOf="@+id/tvTitle"
+                        app:srcCompat="@drawable/ic_user_icon_placeholder" />
+
+                    <TextView
+                        android:id="@+id/tvAuthor"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:text="UserName"
+                        android:textColor="@color/primary_blue"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/ivAuthorLogo"
+                        app:layout_constraintStart_toEndOf="@+id/ivAuthorLogo"
+                        app:layout_constraintTop_toTopOf="@+id/ivAuthorLogo" />
+
+                    <TextView
+                        android:id="@+id/tvCreatedTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="19 ноября 2014 в 17:24"
+                        android:textColor="#919191"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@+id/tvTitle"
+                        app:layout_constraintTop_toTopOf="@+id/bottomView" />
+
+                    <com.klim.habrareader.app.views.RatingView
+                        android:id="@+id/rvVotes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="6dp"
+                        app:colorNegative="@color/votes_red"
+                        app:colorNeutral="@color/votes_neutral"
+                        app:colorPositive="@color/votes_green"
+                        app:icon="@drawable/ic_vote"
+                        app:iconColor="@color/primary_blue"
+                        app:iconHeight="17dp"
+                        app:iconWidth="17dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tvAuthor"
+                        app:layout_constraintEnd_toStartOf="@+id/rvBookmarks"
+                        app:layout_constraintTop_toTopOf="@+id/tvAuthor"
+                        app:textSize="14sp"
+                        app:useColors="true"
+                        app:usePrefix="true"
+                        app:valueColor="@color/primary_blue" />
+
+                    <com.klim.habrareader.app.views.RatingView
+                        android:id="@+id/rvBookmarks"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="6dp"
+                        app:icon="@drawable/ic_bookmark"
+                        app:iconColor="@color/primary_blue"
+                        app:iconHeight="16dp"
+                        app:iconWidth="16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tvAuthor"
+                        app:layout_constraintEnd_toStartOf="@+id/rvViews"
+                        app:layout_constraintTop_toTopOf="@+id/tvAuthor"
+                        app:textSize="14sp"
+                        app:valueColor="@color/primary_blue" />
+
+                    <com.klim.habrareader.app.views.RatingView
+                        android:id="@+id/rvViews"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="6dp"
+                        app:icon="@drawable/ic_view"
+                        app:iconColor="@color/primary_blue"
+                        app:iconHeight="18dp"
+                        app:iconWidth="18dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tvAuthor"
+                        app:layout_constraintEnd_toStartOf="@+id/rvComments"
+                        app:layout_constraintTop_toTopOf="@+id/tvAuthor"
+                        app:textSize="14sp"
+                        app:valueColor="@color/primary_blue" />
+
+                    <com.klim.habrareader.app.views.RatingView
+                        android:id="@+id/rvComments"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="16dp"
+                        app:icon="@drawable/ic_comment"
+                        app:iconColor="@color/primary_blue"
+                        app:iconHeight="15dp"
+                        app:iconWidth="15dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tvAuthor"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/tvAuthor"
+                        app:textSize="14sp"
+                        app:valueColor="@color/primary_blue" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/srlRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvContentList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                android:visibility="visible"
+
+                tools:listitem="@layout/item_post_details_text" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>

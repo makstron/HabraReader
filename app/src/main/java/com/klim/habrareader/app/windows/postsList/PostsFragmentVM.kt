@@ -16,9 +16,6 @@ import com.klim.habrareader.data.repositories.author.dataSources.remote.AuthorRe
 import com.klim.habrareader.data.repositories.post.PostRepository
 import com.klim.habrareader.data.repositories.post.dataSources.local.PostLocalDataSource
 import com.klim.habrareader.data.repositories.post.dataSources.remote.PostRemoteDataSource
-import com.klim.habrareader.data.repositories.postsThumb.PostThumbsRepository
-import com.klim.habrareader.data.repositories.postsThumb.dataSources.local.PostThumbsLocalDataSource
-import com.klim.habrareader.data.repositories.postsThumb.dataSources.remote.PostThumbsRemoteDataSource
 import com.klim.habrareader.data.retrofit.RetrofitProvider
 import com.klim.habrareader.domain.UseCaseBase
 import com.klim.habrareader.domain.entities.PostThumbEntity
@@ -44,8 +41,10 @@ class PostsFragmentVM(val appContext: Application) : AndroidViewModel(appContext
     private val postThumbsUseCase: PostThumbsUseCaseI = PostThumbsUseCase(
         flow,
         viewModelScope,
-        PostThumbsRepository(viewModelScope, PostThumbsLocalDataSource(DbHelper.get()), PostThumbsRemoteDataSource(RetrofitProvider())),
-        PostRepository(PostLocalDataSource(DbHelper.get()), PostRemoteDataSource(RetrofitProvider())),
+        PostRepository(viewModelScope,
+            PostLocalDataSource(DbHelper.get()),
+            PostRemoteDataSource(RetrofitProvider())
+        ),
         AuthorRepository(AuthorLocalDataSource(DbHelper.get()), AuthorRemoteDataSource(RetrofitProvider()))
     )
 

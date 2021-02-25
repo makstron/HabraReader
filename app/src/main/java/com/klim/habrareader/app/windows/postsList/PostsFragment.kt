@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.klim.habrareader.R
 import com.klim.habrareader.app.BaseFragment
 import com.klim.habrareader.app.views.BaseSpinnerAdapter
-import com.klim.habrareader.app.windows.post.PostDetailsFragment
+import com.klim.habrareader.app.windows.postDetails.PostDetailsFragment
 import com.klim.habrareader.app.windows.postsList.entities.PostView
 import com.klim.habrareader.app.windows.postsList.enums.Commands
 import com.klim.habrareader.app.windows.postsList.filters.PostListType

@@ -2,6 +2,7 @@ package com.klim.habrareader.data.retrofit;
 
 import com.klim.habrareader.BuildConfig;
 import com.klim.habrareader.data.retrofit.apis.AllPostsApi;
+import com.klim.habrareader.data.retrofit.apis.PostDetailsApi;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -13,7 +14,9 @@ public class RetrofitProvider {
     private static RetrofitProvider provider;
 
     private Retrofit retrofit;
+
     private AllPostsApi allPostsApi;
+    private PostDetailsApi postDetailsApi;
 
     public static RetrofitProvider get() {
         if (provider == null) {
@@ -46,6 +49,13 @@ public class RetrofitProvider {
             allPostsApi = getRetrofit().create(AllPostsApi.class);
         }
         return allPostsApi;
+    }
+
+    public PostDetailsApi getPostDetailsApi() {
+        if (postDetailsApi == null) {
+            postDetailsApi = getRetrofit().create(PostDetailsApi .class);
+        }
+        return postDetailsApi;
     }
 
 }

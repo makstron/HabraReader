@@ -14,12 +14,13 @@ object PostViewMapper {
         formatDateTime: DateFormat,
         postThumb: PostThumbEntity
     ): PostView {
+        //todo refactor it
         val calToday = Calendar.getInstance()
         val calYesterday = Calendar.getInstance()
         calYesterday.add(Calendar.DATE, -1)
         val calPost = Calendar.getInstance()
         calPost.timeInMillis = postThumb.createdTimestamp
-        calPost.add(Calendar.HOUR_OF_DAY, 2)
+        calPost.add(Calendar.HOUR_OF_DAY, 2) // 2 - is current timebelt
 
         val createdLabel: String
         when {
