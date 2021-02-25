@@ -6,5 +6,5 @@ Some elements of view can not be available at this moment. They vill be added in
 This background ![](https://via.placeholder.com/15/B7A6CA/000000?text=+) means unsupported element of view
 
 
-Some preview
+Some preview<br /><br />
 ![](https://github.com/makstron/HabraReader/blob/main/info/preview.gif?raw=true)
