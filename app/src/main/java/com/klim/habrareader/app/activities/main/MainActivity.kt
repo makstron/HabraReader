@@ -1,28 +1,20 @@
 package com.klim.habrareader.app.activities.main
 
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import com.klim.habrareader.R
 import com.klim.habrareader.app.BaseFragment
 import com.klim.habrareader.app.managers.windows_manager.WindowsContainerActivity
 import com.klim.habrareader.app.managers.windows_manager.WindowsManager
 import com.klim.habrareader.app.managers.windows_manager.views.WindowsContainer
-import com.klim.habrareader.app.utils.AndroidMeasurementsU
-import com.klim.habrareader.app.utils.ConvertU
 import com.klim.habrareader.app.windows.postsList.PostsFragment
 import com.klim.habrareader.databinding.ActivityMainBinding
-import com.klim.habrareader.domain.entities.PostThumbEntity
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.flow.*
-import kotlin.random.Random
+import kotlin.system.measureTimeMillis
 
 
 class MainActivity : AppCompatActivity(), WindowsContainerActivity {
@@ -42,6 +34,8 @@ class MainActivity : AppCompatActivity(), WindowsContainerActivity {
         }
 
         startWindow(PostsFragment.newInstance(Bundle()), true)
+
+
 
 //        GlobalScope.launch(Dispatchers.Default) {
 //            var succes = 0

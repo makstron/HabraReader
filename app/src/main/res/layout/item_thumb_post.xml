@@ -3,12 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="post"
+            type="com.klim.habrareader.app.windows.postsList.entities.PostView" />
+
+    </data>
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cvContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginVertical="8dp"
+        android:tag="@{post}"
         app:cardBackgroundColor="@color/post_thumb_bg"
         app:cardCornerRadius="8dp">
 
@@ -22,6 +31,7 @@
                 android:layout_width="0dp"
                 android:layout_height="165dp"
                 android:scaleType="centerCrop"
+                app:imageUrl="@{post.postImage}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -45,6 +55,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
+                android:text="@{post.title}"
                 android:textColor="@color/primary_blue"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -73,6 +84,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:text="@{post.author}"
                 android:textColor="@color/primary_blue"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="@+id/tvTitle"
@@ -86,6 +98,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginRight="16dp"
+                android:text="@{post.shortDescription}"
                 android:textColor="@color/post_thumb_text"
                 android:textSize="14sp"
                 android:visibility="visible"
@@ -111,6 +124,7 @@
                 app:textSize="14sp"
                 app:useColors="true"
                 app:usePrefix="true"
+                app:value="@{post.votesCount}"
                 app:valueColor="@color/primary_blue" />
 
             <com.klim.habrareader.app.views.RatingView
@@ -126,6 +140,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/rvViews"
                 app:layout_constraintTop_toTopOf="@+id/tvAuthor"
                 app:textSize="14sp"
+                app:value="@{post.bookmarksCount}"
                 app:valueColor="@color/primary_blue" />
 
             <com.klim.habrareader.app.views.RatingView
@@ -141,6 +156,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/rvComments"
                 app:layout_constraintTop_toTopOf="@+id/tvAuthor"
                 app:textSize="14sp"
+                app:value="@{post.viewsCount}"
                 app:valueColor="@color/primary_blue" />
 
             <com.klim.habrareader.app.views.RatingView
@@ -156,6 +172,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tvAuthor"
                 app:textSize="14sp"
+                app:value="@{post.commentsCount}"
                 app:valueColor="@color/primary_blue" />
 
 
@@ -165,6 +182,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="16dp"
+                android:text="@{post.createdTime}"
                 android:textColor="#878787"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"

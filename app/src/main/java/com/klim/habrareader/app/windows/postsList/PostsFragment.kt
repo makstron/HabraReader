@@ -21,12 +21,13 @@ import com.klim.habrareader.app.windows.postsList.filters.PostListType
 import com.klim.habrareader.app.windows.postsList.filters.PostsPeriod
 import com.klim.habrareader.app.windows.postsList.filters.PostsThreshold
 import com.klim.habrareader.databinding.FragmentPostsBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class PostsFragment : BaseFragment(), LifecycleOwner {
 
     private lateinit var binding: FragmentPostsBinding
-    private lateinit var vm: PostsFragmentVM
+    private val vm by viewModel<PostsFragmentVM>()
 
     private lateinit var adapter: PostsAdapter
     private lateinit var adapterList: BaseSpinnerAdapter<PostListType>
@@ -50,7 +51,7 @@ class PostsFragment : BaseFragment(), LifecycleOwner {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        vm = ViewModelProvider(this).get(PostsFragmentVM::class.java)
+//        vm = ViewModelProvider(this).get(PostsFragmentVM::class.java)
 
         vm.lastChangedItem.observe(this, { updateCommand ->
             adapter.clear()

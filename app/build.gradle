@@ -57,6 +57,7 @@ android {
 
 dependencies {
     def room_version = "2.2.6"
+    def koin_version = "2.0.1"
 
     //compilers
     kapt "com.android.databinding:compiler:3.2.0-alpha10"
@@ -101,6 +102,11 @@ dependencies {
     //Okhttp3
     implementation "com.squareup.okhttp3:okhttp:4.8.1"
     implementation 'com.squareup.okhttp3:logging-interceptor:4.8.1'
+
+    //koin
+    implementation "org.koin:koin-android:$koin_version"
+    implementation "org.koin:koin-androidx-viewmodel:$koin_version"
+    implementation "org.koin:koin-androidx-scope:$koin_version"
 
     //html parser
     implementation 'org.jsoup:jsoup:1.11.2'

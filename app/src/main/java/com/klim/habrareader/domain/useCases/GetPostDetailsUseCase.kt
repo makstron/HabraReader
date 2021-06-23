@@ -32,3 +32,8 @@ open class GetPostDetailsUseCase(val scope: CoroutineScope, private val reposito
 
 
 }
+
+//дістати дані з руми як флов
+//        відправити запит на оновлення з сервака
+//        зберегти в кеш
+//        рума сама видасть дані заново

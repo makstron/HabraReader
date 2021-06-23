@@ -8,6 +8,7 @@ object DbHelper {
     private lateinit var db: AppDatabase
     fun init(application: Application) {
         db = Room.databaseBuilder(application, AppDatabase::class.java, DB_NAME)
+            .addMigrations()
             .build()
     }
 

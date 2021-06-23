@@ -5,13 +5,16 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
+import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.klim.habrareader.R
 import com.klim.habrareader.app.utils.ResourceUtil
 import com.klim.habrareader.app.windows.postsList.entities.PostView
+import com.klim.habrareader.databinding.ItemThumbPostBinding
 import com.squareup.picasso.Picasso
+
 
 class PostsAdapter(
     var context: Context,
@@ -19,42 +22,31 @@ class PostsAdapter(
     val clickListener: View.OnClickListener
 ) : RecyclerView.Adapter<PostViewHolder>() {
 
-    private val placeholder: Drawable
-
     init {
         placeholder = ResourceUtil.getColoredRes(context, R.drawable.ic_terrain_wide, ContextCompat.getColor(context, R.color.post_thumb_image_placeholder))
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        return PostViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_thumb_post, parent, false))
+        return PostViewHolder(ItemThumbPostBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
+        holder.binding.post = data[position]
+
         val item = data[position]
         holder.binding.apply {
-            tvTitle.text = item.title
-            tvDescription.text = item.shortDescription
+//            tvTitle.text = item.title
+//            tvDescription.text = item.shortDescription
 
-            rvVotes.setValue(item.votesCount)
-            rvBookmarks.setValue(item.bookmarksCount)
-            rvViews.setValue(item.viewsCount)
-            rvComments.setValue(item.commentsCount)
+//            rvVotes.setValue(item.votesCount)
+//            rvBookmarks.setValue(item.bookmarksCount)
+//            rvViews.setValue(item.viewsCount)
+//            rvComments.setValue(item.commentsCount)
 
-            tvCreatedTime.text = item.createdTime
-            tvAuthor.text = item.author
+//            tvCreatedTime.text = item.createdTime
+//            tvAuthor.text = item.author
 
-            if (!item.postImage.isNullOrBlank()) {
-                ivPostImage.visibility = View.VISIBLE
 
-                Picasso.get()
-                    .load(item.postImage)
-                    .placeholder(placeholder)
-                    .error(placeholder)
-                    .into(ivPostImage)
-
-            } else {
-                ivPostImage.visibility = View.GONE
-            }
 
             ivAuthorLogo.setImageResource(R.drawable.ic_user_icon_placeholder)
             if (!item.authorIcon.isNullOrEmpty()) {
@@ -65,8 +57,29 @@ class PostsAdapter(
                     .into(ivAuthorLogo)
             }
 
-            cvContainer.tag = item
+//            cvContainer.tag = item
             cvContainer.setOnClickListener(clickListener)
+        }
+    }
+
+    companion object {
+        private lateinit var placeholder: Drawable
+
+        @JvmStatic
+        @BindingAdapter("app:imageUrl")
+        public fun loadImage(ivPostImage: ImageView, postImage: String?) {
+            if (!postImage.isNullOrBlank()) {
+                ivPostImage.visibility = View.VISIBLE
+
+                Picasso.get()
+                    .load(postImage)
+                    .placeholder(placeholder)
+                    .error(placeholder)
+                    .into(ivPostImage)
+
+            } else {
+                ivPostImage.visibility = View.GONE
+            }
         }
     }
 
