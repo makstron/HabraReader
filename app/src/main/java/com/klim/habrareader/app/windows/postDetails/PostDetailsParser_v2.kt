@@ -15,9 +15,11 @@ class PostDetailsParser_v2 {
 
     fun parse(body: String): ArrayList<DetailBase> {
         val doc = Jsoup.parse(body)
-        val postTextDiv = doc.selectFirst("div.post__text")
+        val postTextDiv = doc.selectFirst("div.article-formatted-body")
+            .child(0)
+            .childNodes()
 
-        parse(postTextDiv.childNodes())
+        parse(postTextDiv)
 
         return listDetails
     }
@@ -60,7 +62,8 @@ class PostDetailsParser_v2 {
                         "figure" -> {
                             val img = node.selectFirst("img")
                             closeNode()
-                            currentDetail = DetailImage(img.attr("src"))
+                            currentDetail = DetailImage(img.attr("data-src"))
+//                            currentDetail = DetailImage(img.attr("src")) //small picture, should be loaded at first
                             closeNode()
                         }
                         "ul", "ol" -> {

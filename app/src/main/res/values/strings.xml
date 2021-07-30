@@ -12,5 +12,6 @@
     <string name="post_period_type_week">Неделя</string>
     <string name="post_period_type_month">Месяц</string>
     <string name="post_period_type_year">Год</string>
+    <string name="post_period_type_all_time">Всё время</string>
 
 </resources>

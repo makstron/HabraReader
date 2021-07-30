@@ -19,7 +19,8 @@ class PostRemoteDataSource(var retrofit: RetrofitProvider) : PostDataSourceI {
     override fun getAllPosts(postsThreshold: PostsThreshold): Flow<PostThumbDTO> = flow {
         var period = ""
         when (postsThreshold._id) {
-            PostsThreshold.MORE_THAN_0._id -> period = "all"
+            PostsThreshold.MORE_THAN_ALL._id -> period = ""
+            PostsThreshold.MORE_THAN_0._id -> period = "top0"
             PostsThreshold.MORE_THAN_10._id -> period = "top10"
             PostsThreshold.MORE_THAN_25._id -> period = "top25"
             PostsThreshold.MORE_THAN_50._id -> period = "top50"
@@ -42,10 +43,11 @@ class PostRemoteDataSource(var retrofit: RetrofitProvider) : PostDataSourceI {
     override fun getBestPosts(postsPeriod: PostsPeriod): Flow<PostThumbDTO> = flow {
         var period = ""
         when (postsPeriod._id) {
-            PostsPeriod.PERIOD_DAY._id -> period = ""
+            PostsPeriod.PERIOD_DAY._id -> period = "daily"
             PostsPeriod.PERIOD_WEEK._id -> period = "weekly"
             PostsPeriod.PERIOD_MONTH._id -> period = "monthly"
             PostsPeriod.PERIOD_YEAR._id -> period = "yearly"
+            PostsPeriod.PERIOD_ALL_TIME._id -> period = "alltime"
         }
         val messages: Call<String> = retrofit.allPostsApi.topPosts(period)
 

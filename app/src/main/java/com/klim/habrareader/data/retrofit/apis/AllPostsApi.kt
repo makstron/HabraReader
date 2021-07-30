@@ -6,7 +6,7 @@ import retrofit2.http.Path
 
 interface AllPostsApi {
 
-    @GET("all/{rating}/")
+    @GET("all/{rating}")
     fun allPosts(@Path(value = "rating", encoded = true) rating: String): Call<String>
 
     @GET("top/{period}/")

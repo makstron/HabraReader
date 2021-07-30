@@ -7,11 +7,12 @@ enum class PostsThreshold(
     var label: String = ""
 ) : BaseSpinnerAdapter.Item {
 
-    MORE_THAN_0(1, "≥0"),
-    MORE_THAN_10(2, "≥10"),
-    MORE_THAN_25(3, "≥25"),
-    MORE_THAN_50(4, "≥50"),
-    MORE_THAN_100(5, "≥100");
+    MORE_THAN_ALL(1, "all"),
+    MORE_THAN_0(2, "≥0"),
+    MORE_THAN_10(3, "≥10"),
+    MORE_THAN_25(4, "≥25"),
+    MORE_THAN_50(5, "≥50"),
+    MORE_THAN_100(6, "≥100");
 
     override fun getType() = BaseSpinnerAdapter.ItemTypes.ITEM
 

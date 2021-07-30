@@ -12,7 +12,8 @@ enum class PostsPeriod(
     PERIOD_DAY(1, R.string.post_period_type_day),
     PERIOD_WEEK(2, R.string.post_period_type_week),
     PERIOD_MONTH(3, R.string.post_period_type_month),
-    PERIOD_YEAR(4, R.string.post_period_type_year);
+    PERIOD_YEAR(4, R.string.post_period_type_year),
+    PERIOD_ALL_TIME(5, R.string.post_period_type_all_time);
 
     override fun getType() = BaseSpinnerAdapter.ItemTypes.ITEM
 
