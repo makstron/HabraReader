@@ -12,6 +12,7 @@ import com.klim.habrareader.R
 import com.klim.habrareader.app.utils.ResourceUtil
 import com.klim.habrareader.app.windows.postsList.entities.PostView
 import com.squareup.picasso.Picasso
+import org.json.JSONArray
 
 class PostsAdapter(
     var context: Context,
@@ -33,7 +34,21 @@ class PostsAdapter(
         val item = data[position]
         holder.binding.apply {
             tvTitle.text = item.title
+
             tvDescription.text = item.shortDescription
+//            val descriptionJson = JSONArray(item.shortDescription)
+//            for(i in 0 until descriptionJson.length()) {
+//                val tag = descriptionJson.getJSONObject(i)
+//                when(tag.getString("tag")) {
+//                    "p" -> {
+//
+//                    }
+//                    "br" -> {
+//
+//                    }
+//                }
+//            }
+
 
             rvVotes.setValue(item.votesCount)
             rvBookmarks.setValue(item.bookmarksCount)

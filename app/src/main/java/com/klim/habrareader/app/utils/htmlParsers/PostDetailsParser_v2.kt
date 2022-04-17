@@ -1,4 +1,4 @@
-package com.klim.habrareader.app.windows.postDetails
+package com.klim.habrareader.app.utils.htmlParsers
 
 import com.klim.habrareader.app.windows.postDetails.entities.*
 import com.klim.habrareader.app.windows.postDetails.enums.TitleSizesEnum
@@ -56,13 +56,22 @@ class PostDetailsParser_v2 {
                         }
                         "img" -> {
                             closeNode()
-                            currentDetail = DetailImage(node.attr("src"))
+                            var imgSrc = node.attr("data-src")
+                            if (imgSrc.isEmpty()) {
+                                imgSrc = node.attr("src")
+                            }
+                            imgSrc = imgSrc.replace("habrastorage.org/", "hsto.org/")
+                            currentDetail = DetailImage(imgSrc)
                             closeNode()
                         }
                         "figure" -> {
                             val img = node.selectFirst("img")
                             closeNode()
-                            currentDetail = DetailImage(img.attr("data-src"))
+                            var imgSrc = img.attr("data-src")
+                            if (imgSrc.isEmpty()) {
+                                imgSrc = img.attr("src")
+                            }
+                            currentDetail = DetailImage(imgSrc)
 //                            currentDetail = DetailImage(img.attr("src")) //small picture, should be loaded at first
                             closeNode()
                         }
@@ -94,6 +103,14 @@ class PostDetailsParser_v2 {
                                     val html = "<iframe width=\"100%\" height=\"auto\"\n" +
                                             "                                style=\"display: block; border-style:none; margin: 0 auto; max-width: 100% !important;\"\n" +
                                             "                                src=\"${iframe.attr("src")}\"></iframe>"
+                                    closeNode()
+                                    currentDetail = DetailEmbedded(html)
+                                    closeNode()
+                                }
+                                node.hasClass("tm-iframe_temp") -> {
+                                    val html = "<iframe width=\"100%\" height=\"auto\"\n" +
+                                            "                                style=\"display: block; border-style:none; margin: 0 auto; max-width: 100% !important;\"\n" +
+                                            "                                src=\"${node.attr("data-src")}\"></iframe>"
                                     closeNode()
                                     currentDetail = DetailEmbedded(html)
                                     closeNode()

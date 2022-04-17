@@ -12,24 +12,7 @@
             android:id="@+id/wcWindowsContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        </com.klim.habrareader.app.managers.windows_manager.views.WindowsContainer>
-
-<!--        <View-->
-<!--            android:id="@+id/statusBarFon"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="24dp"-->
-<!--            android:background="@color/status_bar_bg"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--        <View-->
-<!--            android:id="@+id/navigationButtons"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="48dp"-->
-<!--            android:alpha="0.4"-->
-<!--            android:background="@color/status_bar_bg"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent" />-->
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

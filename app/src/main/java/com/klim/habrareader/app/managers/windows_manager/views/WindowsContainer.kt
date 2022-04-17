@@ -5,27 +5,31 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.FrameLayout
-import com.klim.habrareader.app.BaseFragment
+import com.klim.habrareader.R
+import com.klim.habrareader.app.windows.BaseFragment
 import com.klim.habrareader.app.managers.windows_manager.Window
-import com.klim.habrareader.app.managers.windows_manager.WindowsManager
+import com.klim.habrareader.app.managers.windows_manager.WindowsKeeper
 import kotlin.math.abs
 
 
 class WindowsContainer : FrameLayout {
 
-    lateinit var windowsManager: WindowsManager
-    var mDetector: GestureDetector
+    lateinit var windowsKeeper: WindowsKeeper
+    private var mDetector: GestureDetector
 
-    private var startedSwipe = false
-    private var startedSwipeDistanceX = 0f
-    private var startedSwipeDistanceY = 0f
+    private var startedClosing = false
+    private var swipeDistance: PointF = PointF(0f, 0f)
 
     private var enableUserSwipe = true
     private var displayWidth = 0f
+    private var moveDistanceBeforeStartSwipe = 0f
+    private var xMoreThanYScrollForStartSwipe = 3f //swipe horizontal more than swipe vertical in this count of times for start closing window. It is like a filter
+    private var pointOfNoReturn = 0f //after this swipe distance window will be close
 
     constructor(context: Context) : super(context)
 
@@ -33,30 +37,27 @@ class WindowsContainer : FrameLayout {
 
     init {
         mDetector = GestureDetector(context, GestureListener())
-
         displayWidth = Resources.getSystem().displayMetrics.widthPixels.toFloat()
+        moveDistanceBeforeStartSwipe = context.resources.getDimension(R.dimen.start_swipe_distance)
+        pointOfNoReturn = displayWidth / 5f
     }
 
     fun startWindow(fragment: BaseFragment, isItBase: Boolean = false) {
-        windowsManager.startWindow(fragment, isItBase)
+        windowsKeeper.startWindow(fragment, isItBase)
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
         when (ev?.action) {
             MotionEvent.ACTION_DOWN -> {
-                startedSwipe = false
-                startedSwipeDistanceX = 0f
-                startedSwipeDistanceY = 0f
+                startedClosing = false
+                resetSwipeDistance()
             }
         }
 
-        if (windowsManager.getTopWindow() != null && !windowsManager.getTopWindow()!!.base) {
-            if (mDetector.onTouchEvent(ev))
-                return true
-
-            return false
+        return if (!windowsKeeper.getTopWindow().base) {
+            mDetector.onTouchEvent(ev)
         } else {
-            return super.onInterceptTouchEvent(ev)
+            super.onInterceptTouchEvent(ev)
         }
     }
 
@@ -67,28 +68,28 @@ class WindowsContainer : FrameLayout {
             } else {
                 when (ev.action) {
                     MotionEvent.ACTION_UP -> {
-                        startedSwipe = false
-                        startedSwipeDistanceX = 0f
-                        startedSwipeDistanceY = 0f
-
-                        windowsManager.getTopWindow()?.let { window ->
-                            val containerView = window.containerView
-                            //close window
-                            if (containerView.translationX > displayWidth / 5f) {
-                                closeWindow(window)
-                            } else {// return back window
-                                moveBackWindow(window)
-                            }
-                        }
-                    }
-                    else -> {
-
+                        startedClosing = false
+                        resetSwipeDistance()
+                        finishWindowSwiping()
                     }
                 }
             }
         }
 
         return super.onTouchEvent(ev)
+    }
+
+    private fun resetSwipeDistance() {
+        swipeDistance = PointF(0f, 0f)
+    }
+
+    private fun finishWindowSwiping() {
+        val topWindow = windowsKeeper.getTopWindow()
+        if (topWindow.containerView.translationX > pointOfNoReturn) {
+            startWindowClosingAnimation(topWindow)
+        } else {
+            moveBackWindow(topWindow)
+        }
     }
 
     private fun moveBackWindow(window: Window) {
@@ -110,7 +111,7 @@ class WindowsContainer : FrameLayout {
         va.start()
     }
 
-    private fun closeWindow(window: Window) {
+    private fun startWindowClosingAnimation(window: Window) {
         val va = ValueAnimator.ofFloat(
             window.containerView.translationX,
             displayWidth * 1.1f
@@ -124,10 +125,22 @@ class WindowsContainer : FrameLayout {
             override fun onAnimationEnd(animation: Animator?, isReverse: Boolean) {
                 super.onAnimationEnd(animation, isReverse)
                 enableUserSwipe = true
-                windowsManager.onBackPressed()
+                windowsKeeper.removeTopWindow()
             }
         })
         va.start()
+    }
+
+    fun onBackPressed(): Boolean {
+        val result = windowsKeeper.existsWindowForBackPressed()
+        if (result) {
+            closeTopWindow()
+        }
+        return result
+    }
+
+    private fun closeTopWindow() {
+        startWindowClosingAnimation(windowsKeeper.getTopWindow())
     }
 
     internal inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
@@ -154,40 +167,36 @@ class WindowsContainer : FrameLayout {
 
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             if (enableUserSwipe) {
-                startedSwipeDistanceX += distanceX
-                startedSwipeDistanceY += distanceY
-                startedSwipe =
-                    startedSwipe || (abs(startedSwipeDistanceX) > abs(startedSwipeDistanceY) * 3 && abs(
-                        startedSwipeDistanceX
-                    ) > 100) // todo change 100 to 32dp
-                if (startedSwipe) {
-
-                    windowsManager.getTopWindow()?.let { window ->
-                        val containerView = window.containerView
-                        if (containerView.translationX - distanceX > 0) {
-                            containerView.translationX = containerView.translationX - distanceX
-                        }
-                    }
-
+                addToSwipeDistance(distanceX, distanceY)
+                checkConditionsForStartClosing()
+                if (startedClosing) {
+                    moveTopWindow(distanceX, distanceY)
                     return true
                 }
-
             }
             return super.onScroll(e1, e2, distanceX, distanceY)
+        }
+
+        private fun addToSwipeDistance(distanceX: Float, distanceY: Float) {
+            swipeDistance.x += distanceX
+            swipeDistance.y += distanceY
+        }
+
+        private fun checkConditionsForStartClosing() {
+            startedClosing = startedClosing || (
+                    abs(swipeDistance.x) > abs(swipeDistance.y) * xMoreThanYScrollForStartSwipe &&
+                            abs(swipeDistance.x) > moveDistanceBeforeStartSwipe)
+        }
+
+        private fun moveTopWindow(distanceX: Float, distanceY: Float) {
+            val containerView = windowsKeeper.getTopWindow().containerView
+            if (containerView.translationX - distanceX > 0) {
+                containerView.translationX = containerView.translationX - distanceX
+            }
         }
 
         override fun onFling(event1: MotionEvent, event2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
             return super.onFling(event1, event2, velocityX, velocityY)
         }
-    }
-
-    fun onBackPressed(): Boolean {
-        val result = windowsManager.checkBackPressed()
-        if (result) {
-            windowsManager.getTopWindow()?.let {
-                closeWindow(it)
-            }
-        }
-        return result
     }
 }

@@ -12,7 +12,7 @@
     <color name="colorPrimaryVariant">#FF000000</color>
     <color name="colorOnPrimary">#FF000000</color>
 
-    <color name="status_bar_bg">#F50C0C0C</color>
+    <color name="status_bar_bg">#B7252525</color>
     <color name="toolbar_bg">#F52E2E2E</color>
     <color name="bg">#252525</color>
     <color name="post_thumb_bg">#3C3C3C</color>

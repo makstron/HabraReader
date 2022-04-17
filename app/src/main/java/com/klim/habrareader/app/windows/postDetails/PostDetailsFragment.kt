@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.klim.habrareader.R
-import com.klim.habrareader.app.BaseFragment
+import com.klim.habrareader.app.windows.BaseFragment
 import com.klim.habrareader.app.utils.CharsPerLineUtil
 import com.klim.habrareader.app.utils.ConvertU
 import com.klim.habrareader.databinding.FragmentPostDetailsBinding

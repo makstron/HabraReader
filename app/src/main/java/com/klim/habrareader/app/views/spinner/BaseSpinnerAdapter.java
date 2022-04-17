@@ -1,4 +1,4 @@
-package com.klim.habrareader.app.views;
+package com.klim.habrareader.app.views.spinner;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -17,7 +17,9 @@ import com.klim.habrareader.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BaseSpinnerAdapter<T extends BaseSpinnerAdapter.Item> extends BaseAdapter {
+public class BaseSpinnerAdapter<T extends SpinnerItemI> extends BaseAdapter {
+    public static final int EMPTY_LABEL_RES_ID = -1;
+
     protected List<T> items = new ArrayList<>();
 
     protected Context context;
@@ -111,11 +113,11 @@ public class BaseSpinnerAdapter<T extends BaseSpinnerAdapter.Item> extends BaseA
 
     @Override
     public int getItemViewType(int position) {
-        return ((Item) getItem(position)).getType().id;
+        return ((SpinnerItemI) getItem(position)).getType().id;
     }
 
-    public ItemTypes getItemViewTypeT(int position) {
-        return ((Item) getItem(position)).getType();
+    public SpinnerItemTypes getItemViewTypeT(int position) {
+        return ((SpinnerItemI) getItem(position)).getType();
     }
 
     private @NonNull
@@ -149,7 +151,7 @@ public class BaseSpinnerAdapter<T extends BaseSpinnerAdapter.Item> extends BaseA
         return view;
     }
 
-    protected void onBind(T item, ItemTypes type, @NonNull View view) {
+    protected void onBind(T item, SpinnerItemTypes type, @NonNull View view) {
         TextView text = null;
         switch (type) {
             case HEADER: {
@@ -182,79 +184,22 @@ public class BaseSpinnerAdapter<T extends BaseSpinnerAdapter.Item> extends BaseA
             }
         }
 
-        if (item instanceof Item) {
-            text.setText(item.getName());
-        } else {
-            text.setText(item.toString());
+        String label = item.getName();
+        if (label == null) {
+            int labelResId = item.getNameResId();
+            if (labelResId != EMPTY_LABEL_RES_ID) {
+                label = context.getString(labelResId);
+            } else {
+                label = "";
+            }
         }
+        text.setText(label);
+
     }
 
     @Override
     public boolean isEnabled(int position) {
-        return getItemViewTypeT(position) == ItemTypes.ITEM;
+        return getItemViewTypeT(position) == SpinnerItemTypes.ITEM;
     }
 
-    public enum ItemTypes {
-        HEADER(1),
-        ITEM(0);
-
-        int id = 0;
-
-        ItemTypes(int id) {
-            this.id = id;
-        }
-    }
-
-    public interface Item {
-        ItemTypes getType();
-
-        String getName();
-
-        long getId();
-    }
-
-    public static class ItemSimple implements Item {
-
-        private int id;
-        private String name;
-        private ItemTypes type = ItemTypes.ITEM;
-
-        public ItemSimple(int id, String name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        public ItemSimple(int id, String name, ItemTypes type) {
-            this.id = id;
-            this.name = name;
-            this.type = type;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public void setType(ItemTypes type) {
-            this.type = type;
-        }
-
-        @Override
-        public long getId() {
-            return id;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public ItemTypes getType() {
-            return type;
-        }
-    }
 }

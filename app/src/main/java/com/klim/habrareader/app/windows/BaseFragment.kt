@@ -1,7 +1,6 @@
-package com.klim.habrareader.app
+package com.klim.habrareader.app.windows
 
 import androidx.fragment.app.Fragment
-import com.klim.habrareader.App
 import com.klim.habrareader.app.managers.windows_manager.WindowsContainerActivity
 
 abstract class BaseFragment() : Fragment() {

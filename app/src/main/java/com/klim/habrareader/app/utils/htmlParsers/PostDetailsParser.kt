@@ -1,4 +1,4 @@
-package com.klim.habrareader.app.windows.postDetails
+package com.klim.habrareader.app.utils.htmlParsers
 
 import com.klim.habrareader.app.windows.postDetails.entities.*
 import com.klim.habrareader.app.windows.postDetails.enums.TitleSizesEnum

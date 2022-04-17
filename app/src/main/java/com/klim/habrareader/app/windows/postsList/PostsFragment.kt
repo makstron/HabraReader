@@ -12,12 +12,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.klim.habrareader.R
-import com.klim.habrareader.app.BaseFragment
-import com.klim.habrareader.app.views.BaseSpinnerAdapter
+import com.klim.habrareader.app.windows.BaseFragment
+import com.klim.habrareader.app.views.spinner.BaseSpinnerAdapter
 import com.klim.habrareader.app.windows.postDetails.PostDetailsFragment
 import com.klim.habrareader.app.windows.postsList.entities.PostView
 import com.klim.habrareader.app.windows.postsList.enums.Commands
-import com.klim.habrareader.app.windows.postsList.filters.PostListType
+import com.klim.habrareader.app.windows.postsList.filters.PostsListType
 import com.klim.habrareader.app.windows.postsList.filters.PostsPeriod
 import com.klim.habrareader.app.windows.postsList.filters.PostsThreshold
 import com.klim.habrareader.databinding.FragmentPostsBinding
@@ -29,7 +29,7 @@ class PostsFragment : BaseFragment(), LifecycleOwner {
     private lateinit var vm: PostsFragmentVM
 
     private lateinit var adapter: PostsAdapter
-    private lateinit var adapterList: BaseSpinnerAdapter<PostListType>
+    private lateinit var adapterList: BaseSpinnerAdapter<PostsListType>
     private lateinit var adapterThreshold: BaseSpinnerAdapter<PostsThreshold>
     private lateinit var adapterPeriod: BaseSpinnerAdapter<PostsPeriod>
 
@@ -51,10 +51,13 @@ class PostsFragment : BaseFragment(), LifecycleOwner {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         vm = ViewModelProvider(this).get(PostsFragmentVM::class.java)
+        setVmObservers()
+    }
 
+    private fun setVmObservers() {
         vm.lastChangedItem.observe(this, { updateCommand ->
             adapter.clear()
-            adapter.addAll(vm.data)
+            adapter.addAll(vm.postsViewList)
             when (updateCommand.command) {
                 Commands.DO_NOTHING -> {
                 }
@@ -99,15 +102,15 @@ class PostsFragment : BaseFragment(), LifecycleOwner {
         })
 
         adapterList = BaseSpinnerAdapter(context)
-        adapterList.items = listOf(PostListType.ALL_POSTS, PostListType.BEST_POSTS)
+        adapterList.items = PostsListType.values().toList()
         adapterList.setDropDownViewResource(R.layout.simple_spinner_item, android.R.id.text1)
 
         adapterThreshold = BaseSpinnerAdapter(context)
-        adapterThreshold.items = listOf(PostsThreshold.MORE_THAN_0, PostsThreshold.MORE_THAN_10, PostsThreshold.MORE_THAN_25, PostsThreshold.MORE_THAN_50, PostsThreshold.MORE_THAN_100)
+        adapterThreshold.items = PostsThreshold.values().toList()
         adapterThreshold.setDropDownViewResource(R.layout.simple_spinner_item, android.R.id.text1)
 
         adapterPeriod = BaseSpinnerAdapter(context)
-        adapterPeriod.items = listOf(PostsPeriod.PERIOD_DAY, PostsPeriod.PERIOD_WEEK, PostsPeriod.PERIOD_MONTH, PostsPeriod.PERIOD_YEAR)
+        adapterPeriod.items = PostsPeriod.values().toList()
         adapterPeriod.setDropDownViewResource(R.layout.simple_spinner_item, android.R.id.text1)
 
         binding.apply {
@@ -135,7 +138,7 @@ class PostsFragment : BaseFragment(), LifecycleOwner {
     private fun setActions() {
         binding.apply {
             srlRefresh.setOnRefreshListener {
-                vm.updatePostList(true, sListType.selectedItem as PostListType, sListThreshold.selectedItem as PostsThreshold, sListPeriod.selectedItem as PostsPeriod, true)
+                vm.updatePostList(true, sListType.selectedItem as PostsListType, sListThreshold.selectedItem as PostsThreshold, sListPeriod.selectedItem as PostsPeriod, true)
             }
 
             srlRefresh.setColorSchemeResources(
@@ -148,16 +151,16 @@ class PostsFragment : BaseFragment(), LifecycleOwner {
             sListType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     when (id) {
-                        PostListType.ALL_POSTS._id -> {
+                        PostsListType.ALL_POSTS._id -> {
                             binding.sListThreshold.visibility = View.VISIBLE
                             binding.sListPeriod.visibility = View.GONE
                         }
-                        PostListType.BEST_POSTS._id -> {
+                        PostsListType.BEST_POSTS._id -> {
                             binding.sListThreshold.visibility = View.GONE
                             binding.sListPeriod.visibility = View.VISIBLE
                         }
                     }
-                    vm.updatePostList(true, sListType.selectedItem as PostListType, sListThreshold.selectedItem as PostsThreshold, sListPeriod.selectedItem as PostsPeriod)
+                    vm.updatePostList(true, sListType.selectedItem as PostsListType, sListThreshold.selectedItem as PostsThreshold, sListPeriod.selectedItem as PostsPeriod)
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -167,7 +170,7 @@ class PostsFragment : BaseFragment(), LifecycleOwner {
 
             sListThreshold.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    vm.updatePostList(true, sListType.selectedItem as PostListType, sListThreshold.selectedItem as PostsThreshold, sListPeriod.selectedItem as PostsPeriod)
+                    vm.updatePostList(true, sListType.selectedItem as PostsListType, sListThreshold.selectedItem as PostsThreshold, sListPeriod.selectedItem as PostsPeriod)
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -176,7 +179,7 @@ class PostsFragment : BaseFragment(), LifecycleOwner {
 
             sListPeriod.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    vm.updatePostList(true, sListType.selectedItem as PostListType, sListThreshold.selectedItem as PostsThreshold, sListPeriod.selectedItem as PostsPeriod)
+                    vm.updatePostList(true, sListType.selectedItem as PostsListType, sListThreshold.selectedItem as PostsThreshold, sListPeriod.selectedItem as PostsPeriod)
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {

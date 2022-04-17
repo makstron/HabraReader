@@ -4,17 +4,13 @@ import com.klim.habrareader.R
 import com.klim.habrareader.app.views.spinner.SpinnerItemI
 import com.klim.habrareader.app.views.spinner.SpinnerItemTypes
 
-enum class PostsThreshold(
+enum class PostsListType(
     val _id: Long,
     val label: Int
 ) : SpinnerItemI {
 
-    MORE_THAN_ALL(1, R.string.post_rating_all),
-    MORE_THAN_0(2, R.string.post_rating_0),
-    MORE_THAN_10(3, R.string.post_rating_10),
-    MORE_THAN_25(4, R.string.post_rating_25),
-    MORE_THAN_50(5, R.string.post_rating_50),
-    MORE_THAN_100(6, R.string.post_rating_100);
+    ALL_POSTS(1, R.string.post_list_type_all),
+    BEST_POSTS(2, R.string.post_list_type_best);
 
     override fun getType() = SpinnerItemTypes.ITEM
 

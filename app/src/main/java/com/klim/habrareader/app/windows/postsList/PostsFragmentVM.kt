@@ -5,7 +5,7 @@ import androidx.lifecycle.*
 import com.klim.habrareader.app.windows.postsList.entities.PostView
 import com.klim.habrareader.app.windows.postsList.entities.UpdateListCommand
 import com.klim.habrareader.app.windows.postsList.enums.Commands
-import com.klim.habrareader.app.windows.postsList.filters.PostListType
+import com.klim.habrareader.app.windows.postsList.filters.PostsListType
 import com.klim.habrareader.app.windows.postsList.filters.PostsPeriod
 import com.klim.habrareader.app.windows.postsList.filters.PostsThreshold
 import com.klim.habrareader.app.windows.postsList.mappers.PostViewMapper
@@ -36,10 +36,10 @@ class PostsFragmentVM(val appContext: Application) : AndroidViewModel(appContext
     private val formatDateTime: DateFormat = SimpleDateFormat("d MMMM yyyy в HH:mm")
 
     //flow for receive data
-    private val flow = MutableSharedFlow<PostThumbEntity>(replay = 0)
+    private val dataFlow = MutableSharedFlow<PostThumbEntity>(replay = 0)
 
     private val postThumbsUseCase: PostThumbsUseCaseI = PostThumbsUseCase(
-        flow,
+        dataFlow,
         viewModelScope,
         PostRepository(viewModelScope,
             PostLocalDataSource(DbHelper.get()),
@@ -48,11 +48,11 @@ class PostsFragmentVM(val appContext: Application) : AndroidViewModel(appContext
         AuthorRepository(AuthorLocalDataSource(DbHelper.get()), AuthorRemoteDataSource(RetrofitProvider()))
     )
 
-    private val rawData = ArrayList<PostThumbEntity>()
-    val data = ArrayList<PostView>()
+    private val postsRawList = ArrayList<PostThumbEntity>()
+    val postsViewList = ArrayList<PostView>()
 
     //selected filters
-    private var listType: PostListType? = null
+    private var listType: PostsListType? = null
     private var postsThreshold: PostsThreshold? = null
     private var postsPeriod: PostsPeriod? = null
 
@@ -66,11 +66,11 @@ class PostsFragmentVM(val appContext: Application) : AndroidViewModel(appContext
 
     init {
         viewModelScope.launch(Dispatchers.Default) {
-            flow.collect { postThumbEntity ->
+            dataFlow.collect { postThumbEntity ->
                 var posToChange = -1
                 var command = Commands.DO_NOTHING
-                for (i in 0 until rawData.size) {
-                    if (rawData[i].id == postThumbEntity.id) {
+                for (i in 0 until postsRawList.size) {
+                    if (postsRawList[i].id == postThumbEntity.id) {
                         //todo add check by values
                         posToChange = i
                         break
@@ -78,29 +78,30 @@ class PostsFragmentVM(val appContext: Application) : AndroidViewModel(appContext
                 }
                 if (posToChange != -1) {
                     if (!postThumbEntity.isCashed) {
-                        rawData.set(posToChange, postThumbEntity)
-                        data.set(posToChange, PostViewMapper.transform(appContext, formatTime, formatDateTime, postThumbEntity))
+                        postsRawList.set(posToChange, postThumbEntity)
+                        postsViewList.set(posToChange, PostViewMapper.transform(appContext, formatTime, formatDateTime, postThumbEntity))
                         command = Commands.ITEM_CHANGED
                     }
                 } else {
                     posToChange = 0
-                    rawData.forEach {
+                    postsRawList.forEach {
                         when (listType) {
-                            PostListType.ALL_POSTS -> {
+                            PostsListType.ALL_POSTS -> {
                                 if (it.createdTimestamp <= postThumbEntity.createdTimestamp) {
                                     return@forEach
                                 }
                             }
-                            PostListType.BEST_POSTS -> {
+                            PostsListType.BEST_POSTS -> {
                                 if (it.votesCount <= postThumbEntity.votesCount) {
                                     return@forEach
                                 }
+                                //add check for date if votes are equals
                             }
                         }
                         posToChange++
                     }
-                    rawData.add(posToChange, postThumbEntity)
-                    data.add(posToChange, PostViewMapper.transform(appContext, formatTime, formatDateTime, postThumbEntity))
+                    postsRawList.add(posToChange, postThumbEntity)
+                    postsViewList.add(posToChange, PostViewMapper.transform(appContext, formatTime, formatDateTime, postThumbEntity))
                     command = Commands.ITEM_INSERTED
                 }
 
@@ -112,20 +113,52 @@ class PostsFragmentVM(val appContext: Application) : AndroidViewModel(appContext
         }
     }
 
+    fun updatePostList(showProgress: Boolean, listType: PostsListType, postsThreshold: PostsThreshold, postsPeriod: PostsPeriod, forceUpdate: Boolean = false) {
+        if (forceUpdate || this.listType != listType || this.postsThreshold != postsThreshold || this.postsPeriod != postsPeriod) {
+            this.listType = listType
+            this.postsThreshold = postsThreshold
+            this.postsPeriod = postsPeriod
+
+            _isLoading.value = showProgress
+
+
+            if (forceUpdate) {
+                postsRawList.forEach {
+                    it.isCashed = true
+                }
+            } else {
+                postsRawList.clear()
+                postsViewList.clear()
+                _lastChangedItem.value = UpdateListCommand(Commands.UPDATE_All, 0)
+            }
+
+            viewModelScope.launch(Dispatchers.IO) {
+                when (listType._id) {
+                    PostsListType.ALL_POSTS._id -> {
+                        postThumbsUseCase.getAllPosts(cached = true, remote = true, postsThreshold = postsThreshold, onComplete = ::loadingComplete)
+                    }
+                    PostsListType.BEST_POSTS._id -> {
+                        postThumbsUseCase.getBestPosts(cached = true, remote = true, postsPeriod = postsPeriod, onComplete = ::loadingComplete)
+                    }
+                }
+            }
+        }
+    }
+
     //remove all inappropriate items after finish receiving data
     private fun loadingComplete(status: UseCaseBase.CompleteStatus) {
         if (status.isSuccessful) {
             viewModelScope.launch(Dispatchers.Default) {
-                val rawDataIterator = rawData.iterator()
-                val dataIterator = data.iterator()
+                val rawDataIterator = postsRawList.iterator()
+                val dataIterator = postsViewList.iterator()
                 while (rawDataIterator.hasNext() && dataIterator.hasNext()) {
                     val rawItem = rawDataIterator.next()
                     val item = dataIterator.next()
 
                     if (rawItem.isCashed) {
                         var changedPosition = 0
-                        for (i in 0 until rawData.size) {
-                            if (rawData[i].id == rawItem.id) {
+                        for (i in 0 until postsRawList.size) {
+                            if (postsRawList[i].id == rawItem.id) {
                                 changedPosition = i
                                 break
                             }
@@ -146,38 +179,6 @@ class PostsFragmentVM(val appContext: Application) : AndroidViewModel(appContext
 
         viewModelScope.launch(Dispatchers.Main) {
             _isLoading.value = false
-        }
-    }
-
-    fun updatePostList(showProgress: Boolean, listType: PostListType, postsThreshold: PostsThreshold, postsPeriod: PostsPeriod, forceUpdate: Boolean = false) {
-        if (forceUpdate || this.listType != listType || this.postsThreshold != postsThreshold || this.postsPeriod != postsPeriod) {
-            this.listType = listType
-            this.postsThreshold = postsThreshold
-            this.postsPeriod = postsPeriod
-
-            _isLoading.value = showProgress
-
-
-            if (forceUpdate) {
-                rawData.forEach {
-                    it.isCashed = true
-                }
-            } else {
-                rawData.clear()
-                data.clear()
-                _lastChangedItem.value = UpdateListCommand(Commands.UPDATE_All, 0)
-            }
-
-            viewModelScope.launch(Dispatchers.IO) {
-                when (listType._id) {
-                    PostListType.ALL_POSTS._id -> {
-                        postThumbsUseCase.getAllPosts(cached = true, remote = true, postsThreshold = postsThreshold, onComplete = ::loadingComplete)
-                    }
-                    PostListType.BEST_POSTS._id -> {
-                        postThumbsUseCase.getBestPosts(cached = true, remote = true, postsPeriod = postsPeriod, onComplete = ::loadingComplete)
-                    }
-                }
-            }
         }
     }
 }

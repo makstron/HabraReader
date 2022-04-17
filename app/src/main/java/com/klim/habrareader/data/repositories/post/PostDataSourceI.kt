@@ -12,6 +12,7 @@ interface PostDataSourceI {
     fun getBestPosts(postsPeriod: PostsPeriod): Flow<PostThumbDTO>
 
     fun getPost(postsId: Int): PostDetailsDTO?
+    suspend fun getPost_S(postsId: Int): PostDetailsDTO?
 
     fun savePostThumb(postDetails: PostThumbDTO): Boolean
 

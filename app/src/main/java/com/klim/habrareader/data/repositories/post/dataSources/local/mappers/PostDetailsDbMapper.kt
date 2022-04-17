@@ -4,6 +4,20 @@ import com.klim.habrareader.data.db.tables.Post
 import com.klim.habrareader.data.repositories.post.dataSources.local.models.PostDetailsWithAuthor
 import com.klim.habrareader.data.repositories.post.dtos.PostDetailsDTO
 
+fun PostDetailsWithAuthor.map() = PostDetailsDTO(
+    id = this.id,
+    title = this.title,
+    description = this.description ?: "",
+    postImage = this.postImage,
+    createdTimestamp = this.createdTimestamp,
+    votesCount = this.votesCount,
+    bookmarksCount = this.bookmarksCount,
+    viewsCount = this.viewsCount,
+    commentsCount = this.commentsCount,
+    authorLogin = this.author,
+    authorImage = this.authorIcon
+)
+
 object PostDetailsDbMapper {
     fun transform(post: PostDetailsWithAuthor?): PostDetailsDTO? {
         if (post == null)
@@ -23,7 +37,7 @@ object PostDetailsDbMapper {
         )
     }
 
-    fun transform(postsDetailsDTO: PostDetailsDTO, shortDescription: String = "", postImage: String = ""): Post {
+    fun transform(postsDetailsDTO: PostDetailsDTO, shortDescription: String = "", postImage: String?): Post {
         return Post(
             id = postsDetailsDTO.id,
             title = postsDetailsDTO.title,

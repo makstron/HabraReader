@@ -1,166 +1,221 @@
 package com.klim.habrareader.data.repositories.post.dataSources.remote.parsers
 
+import android.annotation.SuppressLint
 import com.klim.habrareader.data.repositories.post.dtos.PostThumbDTO
+import org.json.JSONArray
+import org.json.JSONObject
 import org.jsoup.Jsoup
-import java.text.DateFormat
-import java.text.DateFormatSymbols
+import org.jsoup.nodes.Element
+import org.jsoup.nodes.TextNode
+import org.jsoup.parser.Tag
+import org.jsoup.select.Elements
+import java.lang.StringBuilder
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 object ListPostsParser {
 
-    //todo nee refactor and optimization
+    @SuppressLint("SimpleDateFormat")
+    private val postDateTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+
     fun parse(body: String): List<PostThumbDTO> {
         val list = ArrayList<PostThumbDTO>()
-
-        val doc = Jsoup.parse(body)
-        doc.selectFirst("div.tm-articles-list")
-        .select("article.tm-articles-list__item").forEach { articleWrapper ->
-            try {
-                //id
-                val id = articleWrapper.attr("id").toInt()
-//                val id = idRaw.substring(idRaw.indexOf("_") + 1).toInt()
-
-                //article
-                val articleSnippet = articleWrapper.selectFirst("div.tm-article-snippet")
-                //header
-                val header = articleSnippet.selectFirst("div.tm-article-snippet__meta")
-                val authorWrapper = header.selectFirst(".tm-user-info.tm-article-snippet__author")
-                val author = authorWrapper.selectFirst(".tm-user-info__username").text().trim()
-                val authorIconImg = authorWrapper.selectFirst("img")
-                var authorIcon = ""
-                if (authorIconImg != null) {
-                    authorIcon = authorIconImg.attr("src")
-                    if (authorIcon.indexOf("//") == 0) {
-                        authorIcon = "https:" + authorIcon
-                    }
+        getRawArticles(body)
+            .forEach { articleWrapper ->
+                try {
+                    val article = parseArticle(articleWrapper)
+                    list.add(article)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    //todo do something with errors
                 }
-                val timeRaw = header.selectFirst(".tm-article-snippet__datetime-published").selectFirst("time").attr("datetime")
-                val time = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(timeRaw).time
-//                var startPart = ""
-//                var endPart = ""
-//                val cal = Calendar.getInstance();
-//                cal.set(Calendar.HOUR, 0)
-//                cal.set(Calendar.HOUR_OF_DAY, 0)
-//                cal.set(Calendar.MINUTE, 0)
-//                cal.set(Calendar.SECOND, 0)
-//                cal.set(Calendar.MILLISECOND, 0)
-//                if (timeRaw.contains("сегодня")) { //сегодня в 18:53
-//                    val idx = timeRaw.lastIndexOf(" в ")
-//                    startPart = timeRaw.substring(0, idx) // сегодня
-//                    endPart = timeRaw.substring(idx + 3) // 18:53
-//
-//                    val format: DateFormat = SimpleDateFormat("HH:mm")
-//                    val date = format.parse(endPart)
-//
-//                    cal.set(Calendar.HOUR_OF_DAY, date.hours)
-////                            cal.set(Calendar.HOUR, date.hours)
-//                    cal.set(Calendar.MINUTE, date.minutes)
-//                } else if (timeRaw.contains("вчера")) { //вчера в 17:26
-//                    val idx = timeRaw.lastIndexOf(" в ")
-//                    startPart = timeRaw.substring(0, idx) // вчера
-//                    endPart = timeRaw.substring(idx + 3) // 17:26
-//
-//                    cal.add(Calendar.DATE, -1)
-//                    val format: DateFormat = SimpleDateFormat("HH:mm")
-//                    val date = format.parse(endPart)
-//
-//                    //todo fix it for different between moscov and user timebelt
-//                    if (Calendar.getInstance().get(Calendar.HOUR_OF_DAY) >= 23) {
-//                        cal.add(Calendar.DATE, 1)
-//                    }
-//
-//                    cal.set(Calendar.HOUR_OF_DAY, date.hours)
-////                            cal.set(Calendar.HOUR, date.hours)
-//                    cal.set(Calendar.MINUTE, date.minutes)
-//                } else { //27 декабря 2020 в 22:46 TODO can be trouble with it
-//                    val idx = timeRaw.lastIndexOf(" в ")
-//                    startPart = timeRaw.substring(0, idx) // 27 декабря 2020
-//                    endPart = timeRaw.substring(idx + 3) // 22:46
-//
-////                    startPart.replace("января", "")
-//
-////                    val format: DateFormat = SimpleDateFormat("d MMMM yyyy")
-////                    val date = format.parse(startPart)
-//
-//                    val russian = Locale("ru")
-//                    val dfs: DateFormatSymbols = DateFormatSymbols.getInstance(russian)
-//                    dfs.months = arrayOf("января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря")
-//                    val df = DateFormat.getDateInstance(DateFormat.LONG, russian)
-//                    val sdf = df as SimpleDateFormat
-//                    sdf.dateFormatSymbols = dfs
-//
-//                    val format = SimpleDateFormat("d MMMM yyyy")
-//                    format.dateFormatSymbols = dfs
-//
-//                    val date = format.parse(startPart)
-//
-//
-//                    cal.set(Calendar.DATE, date.date)
-//                    cal.set(Calendar.DAY_OF_MONTH, date.day)
-//                    cal.set(Calendar.MONTH, date.month)
-//                    cal.set(Calendar.YEAR, date.year + 1900)
-//
-//                    val _format: DateFormat = SimpleDateFormat("HH:mm")
-//                    val _date = _format.parse(endPart)
-//
-//                    cal.set(Calendar.HOUR_OF_DAY, _date.hours)
-////                            cal.set(Calendar.HOUR, _date.hours)
-//                    cal.set(Calendar.MINUTE, _date.minutes)
-//                }
-//                cal.add(Calendar.HOUR_OF_DAY, -3)
-//                time = cal.timeInMillis
+            }
+        return list
+    }
 
-                //title
-                val title = articleSnippet.selectFirst("h2.tm-article-snippet__title").text()
+    private fun getRawArticles(body: String): Elements {
+        return Jsoup.parse(body)
+            .selectFirst("div.tm-articles-list")
+            .select("article.tm-articles-list__item")
+    }
 
-                //body
-                val body = articleSnippet.selectFirst("div.tm-article-body")
-                val descriptionDiv = body.selectFirst("div.article-formatted-body")
-                val description = descriptionDiv.text()
-                val descriptionImg = body.selectFirst("img.tm-article-snippet__lead-image")
-                var postImage = ""
-                descriptionImg?.let {
-                    postImage = descriptionImg.attr("src")
-                    if (authorIcon.indexOf("//") == 0) {
-                        authorIcon = "https:" + authorIcon
-                    }
-                }
+    private fun parseArticle(articleWrapper: Element): PostThumbDTO {
+        val postThumb = PostThumbDTO()
 
-                //footer
-                val footer = articleWrapper.selectFirst("div.tm-data-icons")
-                val rating = footer.selectFirst(".tm-votes-meter").selectFirst(".tm-votes-meter__value")
-                val votes = rating.text().toInt()
-//                val votesTotal = rating.attr("title")
-                val viewsCount = footer.selectFirst(".tm-icon-counter").selectFirst(".tm-icon-counter__value").text()
-                val bookmarks = footer.selectFirst(".bookmarks-button").selectFirst(".bookmarks-button__counter").text().toInt()
-                val commentsSpan = footer.selectFirst(".tm-article-comments-counter-link").selectFirst(".tm-article-comments-counter-link__value")
-                var commentsCount = 0
-                if (commentsSpan != null) {
-                    commentsCount = commentsSpan.text().toInt() // todo can be not nomber ex(32.2k)
-                }
+        setPostId(postThumb, articleWrapper)
+        //article
+        parseSnippet(postThumb, articleWrapper)
+        parseFooter(postThumb, articleWrapper)
 
-                list.add(
-                    PostThumbDTO(
-                        id = id,
-                        title = title,
-                        shortDescription = description,
-                        postImage = postImage,
-                        createdTimestamp = time,
-                        votesCount = votes,
-                        bookmarksCount = bookmarks,
-                        viewsCount = viewsCount,
-                        commentsCount = commentsCount,
-                        author = author,
-                        authorIcon = authorIcon
-                    )
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
+        return postThumb
+    }
+
+    private fun setPostId(postThumb: PostThumbDTO, articleWrapper: Element) {
+        postThumb.id = articleWrapper.attr("id").toInt()
+    }
+
+    private fun parseSnippet(postThumb: PostThumbDTO, articleWrapper: Element) {
+        val snippet = articleWrapper.selectFirst("div.tm-article-snippet")
+
+        parseHeader(postThumb, snippet)
+        parseTitle(postThumb, snippet)
+        parseHubs(postThumb, snippet)
+        parseLabels(postThumb, snippet)
+        parseBody(postThumb, snippet)
+    }
+
+    private fun parseHeader(postThumb: PostThumbDTO, snippet: Element) {
+        val header = snippet.selectFirst("div.tm-article-snippet__meta")
+
+        parseAuthor(postThumb, header)
+        parseTime(postThumb, header)
+    }
+
+    private fun parseAuthor(postThumb: PostThumbDTO, header: Element) {
+        val authorWrapper = header.selectFirst(".tm-user-info.tm-article-snippet__author")
+
+        postThumb.author = getAuthorNickname(authorWrapper)
+        postThumb.authorIcon = getAuthorIcon(authorWrapper)
+    }
+
+    private fun getAuthorNickname(authorWrapper: Element) = authorWrapper.selectFirst(".tm-user-info__username").text().trim()
+
+    private fun getAuthorIcon(authorWrapper: Element): String {
+        val authorIconImg = authorWrapper.selectFirst("img")
+        var authorIcon = ""
+        if (authorIconImg != null) {
+            authorIcon = authorIconImg.attr("src")
+            if (authorIcon.indexOf("//") == 0) {
+                authorIcon = "https:$authorIcon"
             }
         }
+        return authorIcon
+    }
 
-        return list
+    private fun parseTime(postThumb: PostThumbDTO, header: Element) {
+        val timeRaw = header.selectFirst(".tm-article-snippet__datetime-published").selectFirst("time").attr("datetime")
+        postDateTimeFormat.parse(timeRaw)?.let {
+            postThumb.createdTimestamp = it.time
+        }
+    }
+
+    private fun parseTitle(postThumb: PostThumbDTO, snippet: Element) {
+        postThumb.title = snippet.selectFirst("h2.tm-article-snippet__title").text()
+    }
+
+    private fun parseHubs(postThumb: PostThumbDTO, snippet: Element) {
+        //todo snippet.selectFirst("div.tm-article-snippet__hubs")
+    }
+
+    private fun parseLabels(postThumb: PostThumbDTO, snippet: Element) {
+        //todo snippet.selectFirst("div.tm-article-snippet__labels")
+    }
+
+    private fun parseBody(postThumb: PostThumbDTO, snippet: Element) {
+        val body = snippet.selectFirst("div.tm-article-body")
+
+        parseDescription(postThumb, body)
+        setDescriptionImage(postThumb, body)
+    }
+
+    //todo need refactor
+    private fun parseDescription(postThumb: PostThumbDTO, body: Element) {
+        val descriptionWrapper = body.selectFirst("div.article-formatted-body")
+
+        val description = StringBuilder()
+        descriptionWrapper.childNodes().forEach { node ->
+            val tag = JSONObject()
+            when (node) {
+                is Element -> {
+                    when (node.tag().name) {
+                        "p" -> {
+                            tag.put("tag", "p")
+                            tag.put("text", node.text())
+
+                            description.append(node.text().trim())
+                            description.append("\n\n")
+                        }
+                        "br" -> {
+                            tag.put("tag", "br")
+
+                            description.append("\n")
+                        }
+                        "img" -> {
+                        }
+                        "ul" -> {
+                            for (j in 0 until node.children().size) {
+                                description.append("  • ")
+                                description.append(node.children()[j].text().trim())
+                                description.append("\n\n")
+                            }
+                        }
+                        "ol" -> {
+                            for (j in 0 until node.children().size) {
+                                description.append("  ${j + 1} ")
+                                description.append(node.children()[j].text().trim())
+                                description.append("\n")
+                            }
+                        }
+                        "a" -> {
+                            val text = node.text().trim()
+                            if (text.isNotEmpty()) {
+                                description.append(text)
+                            }
+                        }
+                        "i" -> {
+                            description.append(node.text().trim())
+                        }
+                        "h1","h2","h3","h4","h5","h6" -> {
+                            description.append(node.text().trim())
+                            description.append("\n")
+                        }
+                        else -> {
+                            description.append(node.tag().name + "******************\r\n")
+                            description.append(node.text().trim())
+                            description.append("******\n")
+                        }
+                    }
+                }
+                is TextNode -> {
+                    description.append(node.text().trim())
+                }
+            }
+        }
+        postThumb.shortDescription = description.toString().trim()
+    }
+
+    private fun setDescriptionImage(postThumb: PostThumbDTO, body: Element) {
+        val descriptionImg = body.selectFirst("img")
+        descriptionImg?.let {
+            postThumb.postImage = descriptionImg.attr("src")
+        }
+    }
+
+    private fun parseFooter(postThumb: PostThumbDTO, articleWrapper: Element) {
+        val footer = articleWrapper.selectFirst("div.tm-data-icons")
+
+        parseRating(postThumb, footer)
+        parseViewsCount(postThumb, footer)
+        parseBookmarks(postThumb, footer)
+        parseComments(postThumb, footer)
+    }
+
+    private fun parseRating(postThumb: PostThumbDTO, footer: Element) {
+        postThumb.votesCount = footer.selectFirst(".tm-votes-meter").selectFirst(".tm-votes-meter__value").text().toInt()
+    }
+
+    private fun parseViewsCount(postThumb: PostThumbDTO, footer: Element) {
+        postThumb.viewsCount = footer.selectFirst(".tm-icon-counter").selectFirst(".tm-icon-counter__value").text()
+    }
+
+    private fun parseBookmarks(postThumb: PostThumbDTO, footer: Element) {
+        postThumb.bookmarksCount = footer.selectFirst(".bookmarks-button").selectFirst(".bookmarks-button__counter").text().toInt()
+    }
+
+    private fun parseComments(postThumb: PostThumbDTO, footer: Element) {
+        val commentsSpan = footer.selectFirst(".tm-article-comments-counter-link").selectFirst(".tm-article-comments-counter-link__value")
+        if (commentsSpan != null) {
+            postThumb.commentsCount = commentsSpan.text().toInt() // todo can be not nomber ex(32.2k)
+        }
     }
 }

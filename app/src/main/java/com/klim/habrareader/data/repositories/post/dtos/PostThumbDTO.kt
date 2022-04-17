@@ -1,15 +1,15 @@
 package com.klim.habrareader.data.repositories.post.dtos
 
 data class PostThumbDTO(
-    val id: Int,
-    val title: String,
-    val shortDescription: String,
-    val postImage: String?,
-    val createdTimestamp: Long,
-    val votesCount: Int,
-    val bookmarksCount: Int,
-    val viewsCount: String,
-    val commentsCount: Int,
-    val author: String,
-    val authorIcon: String?,
+    var id: Int = 0,
+    var title: String = "",
+    var shortDescription: String = "",
+    var postImage: String? = null,
+    var createdTimestamp: Long = 0L,
+    var votesCount: Int = 0,
+    var bookmarksCount: Int = 0,
+    var viewsCount: String = "",
+    var commentsCount: Int = 0,
+    var author: String = "",
+    var authorIcon: String? = null,
 )

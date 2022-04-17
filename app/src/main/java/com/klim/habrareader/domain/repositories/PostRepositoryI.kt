@@ -2,9 +2,11 @@ package com.klim.habrareader.domain.repositories
 
 import com.klim.habrareader.app.windows.postsList.filters.PostsPeriod
 import com.klim.habrareader.app.windows.postsList.filters.PostsThreshold
+import com.klim.habrareader.domain.Response
 import com.klim.habrareader.domain.UseCaseBase
 import com.klim.habrareader.domain.entities.PostDetailsEntity
 import com.klim.habrareader.domain.entities.PostThumbEntity
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 interface PostRepositoryI {
@@ -31,6 +33,12 @@ interface PostRepositoryI {
         postId: Int,
         onComplete: (UseCaseBase.CompleteStatus) -> Unit
     )
+
+    fun getPostDetails(
+        cached: Boolean,
+        remote: Boolean,
+        postId: Int,
+    ): Flow<Response<PostDetailsEntity>>
 
     fun savePostThumb(post: PostThumbEntity): Boolean
 

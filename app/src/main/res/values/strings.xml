@@ -8,10 +8,21 @@
     <string name="post_list_type_all">Все</string>
     <string name="post_list_type_best">Лучшие</string>
 
+    <!-- all posts list items -->
+    <string name="post_rating_all">Все</string>
+    <string name="post_rating_0">≥0</string>
+    <string name="post_rating_10">≥10</string>
+    <string name="post_rating_25">≥25</string>
+    <string name="post_rating_50">≥50</string>
+    <string name="post_rating_100">≥100</string>
+    <!-- // all posts list items -->
+
+    <!-- the best posts list items -->
     <string name="post_period_type_day">Сутки</string>
     <string name="post_period_type_week">Неделя</string>
     <string name="post_period_type_month">Месяц</string>
     <string name="post_period_type_year">Год</string>
     <string name="post_period_type_all_time">Всё время</string>
+    <!-- // the best posts list items -->
 
 </resources>

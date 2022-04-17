@@ -3,6 +3,20 @@ package com.klim.habrareader.data.repositories.post.mappers
 import com.klim.habrareader.data.repositories.post.dtos.PostDetailsDTO
 import com.klim.habrareader.domain.entities.PostDetailsEntity
 
+fun PostDetailsDTO.map() = PostDetailsEntity(
+    id = this.id,
+    title = this.title,
+    postImageUrl = this.postImage,
+    description = this.description,
+    createdTimestamp = this.createdTimestamp,
+    votesCount = this.votesCount,
+    bookmarksCount = this.bookmarksCount,
+    viewsCount = this.viewsCount,
+    commentsCount = this.commentsCount,
+    authorLogin = this.authorLogin,
+    authorIcon = this.authorImage
+)
+
 object PostDetailsDomainMapper {
     fun transform(postDetails: PostDetailsEntity): PostDetailsDTO {
         return PostDetailsDTO(

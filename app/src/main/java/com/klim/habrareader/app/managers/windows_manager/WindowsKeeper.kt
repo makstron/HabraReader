@@ -3,10 +3,11 @@ package com.klim.habrareader.app.managers.windows_manager
 import android.annotation.SuppressLint
 import android.view.View
 import android.widget.FrameLayout
-import com.klim.habrareader.app.BaseFragment
+import com.klim.habrareader.app.windows.BaseFragment
+import java.lang.Exception
 import java.util.*
 
-class WindowsManager(var activity: WindowsContainerActivity) {
+class WindowsKeeper(var activity: WindowsContainerActivity) {
     private var windows = ArrayList<Window>(3)
 
     @SuppressLint("ClickableViewAccessibility")
@@ -39,30 +40,29 @@ class WindowsManager(var activity: WindowsContainerActivity) {
         fragmentTransaction.commit()
     }
 
-    fun getTopWindow(): Window? {
+    fun getTopWindow(): Window {
+        return if (windows.size > 0)
+            windows.last()
+        else
+            throw Exception("Window was not found. Windows list is empty")
+    }
+
+    fun getTopWindowOrNull(): Window? {
         return if (windows.size > 0)
             windows.last()
         else
             null
     }
 
-    fun checkBackPressed(): Boolean {
-        getTopWindow()?.let { _topWindow ->
-            if (!_topWindow.base) {
-                return true
-            }
-        }
-        return false
-    }
+    fun existsWindowForBackPressed(): Boolean = !getTopWindow().base
 
-    fun onBackPressed(): Boolean {
-        getTopWindow()?.let { _topWindow ->
-            if (!_topWindow.base) {
-                removeFragment(_topWindow)
-                removeView(_topWindow)
-                windows.removeLast()
-                return true
-            }
+    fun removeTopWindow(): Boolean {
+        if (existsWindowForBackPressed()) {
+            val topWindow = getTopWindow()
+            removeFragment(topWindow)
+            removeView(topWindow)
+            windows.removeLast()
+            return true
         }
         return false
     }

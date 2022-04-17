@@ -17,9 +17,9 @@ object PostParser {
 
         val authorNickname = doc.selectFirst("span.tm-user-info__user").text()
         var authorIcon: String? = null
-        val authorIconDom = doc.select("img.tm-entity-image__pic")[1]
-        authorIconDom?.let {
-            authorIcon = authorIconDom.attr("src")
+        val authorIconDom = doc.select("img.tm-entity-image__pic")
+        if (authorIconDom != null && authorIconDom.size > 1) {
+            authorIcon = authorIconDom[1].attr("src")
             if (authorIcon!!.indexOf("//") == 0) {
                 authorIcon = "https:" + authorIcon
             }

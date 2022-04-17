@@ -20,11 +20,8 @@ class App : Application() {
 
         DbHelper.init(this)
 
-        System.setProperty("kotlinx.coroutines.debug", if (BuildConfig.DEBUG) "on" else "off")
-
-        Picasso.get().isLoggingEnabled = false
-        Picasso.get().setIndicatorsEnabled(false)
-
+        initPicasso()
+        showLogs()
     }
 
     override fun attachBaseContext(base: Context?) {
@@ -32,4 +29,12 @@ class App : Application() {
         MultiDex.install(this)
     }
 
+    private fun initPicasso() {
+        Picasso.get().isLoggingEnabled = true
+        Picasso.get().setIndicatorsEnabled(false)
+    }
+
+    private fun showLogs() {
+        System.setProperty("kotlinx.coroutines.debug", if (BuildConfig.DEBUG) "on" else "off")
+    }
 }

@@ -80,6 +80,12 @@ class PostRemoteDataSource(var retrofit: RetrofitProvider) : PostDataSourceI {
         }
     }
 
+    @Throws(Exception::class)
+    override suspend fun getPost_S(postsId: Int): PostDetailsDTO? {
+        val responseRaw = retrofit.postDetailsApi.postDetails_S(postsId)
+        return PostParser.parse(responseRaw)
+    }
+
     override fun savePostThumb(postDetails: PostThumbDTO): Boolean {
         throw UnsupportedOperationException("I can not do these")
     }

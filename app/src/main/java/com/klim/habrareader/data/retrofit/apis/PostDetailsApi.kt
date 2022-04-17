@@ -9,4 +9,7 @@ interface PostDetailsApi {
     @GET("post/{post_id}/")
     fun postDetails(@Path(value = "post_id", encoded = true) id: Int): Call<String>
 
+    @GET("post/{post_id}/")
+    suspend fun postDetails_S(@Path(value = "post_id", encoded = true) id: Int): String
+
 }
